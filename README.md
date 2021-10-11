@@ -10,20 +10,29 @@ For any newcomer, he or she should have a meaningful source of information of th
 
 ## MVP:
 
-With the help of Tweepy (https://www.tweepy.org/) , "an easy-to-use Pythn library for accessing the Twitter API", I can search the collect every tweets containing the keywords of a specified city, e.g. Boston. Every tweet can be analyzed by the Cloud Language Processing API and given a sentiment score of the tweet ranging from -1 to 1, meaning the positiveness of this short text.
+With the help of Tweepy (https://www.tweepy.org/) , "an easy-to-use Python library for accessing the Twitter API", I can search and collect every tweets containing the keywords of a specified city, e.g. Boston. Every tweet can be analyzed by the Google Cloud Language Processing API(https://cloud.google.com/natural-language) and given a sentiment score of the tweet ranging from -1 to 1, meaning the positiveness of this short text.
 
 At any given time, I can collect at least 300 tweet and calculate the mean and standard deviation of sentiment regarding this city. Those two indicators enable us to have a more holistic view over the sentimental part of this city.
 
 ## Usage:
 
 
-run 
-> python EC601-Test.py <city name>
-It will shows the mean and standard deviation of sentimental score of the city.
+run the following commands:
+```
+  python EC601-Test.py <city name>
+```
+  It will shows the mean and standard deviation of sentimental score of the city.
+``` 
+  python EC601-Test.py --all
+```
+  It will run the analysis of a built-in list of cities.
+```
+  python EC601-Test.py --all --graph
+```
+  It will also shows a bar graph of sentiment scores.
+  
+## Result:
+![cities score](https://github.com/sunarmed/EC601-Project2/blob/main/cities.png)
 
-run 
-> python EC601-Test.py --all
-It will run the analysis of a built-in list of cities.
-
->python EC601-Test.py --all --graph
-It will also shows a bar graph of sentiment scores.
+In the figure cities.png, Boston scored 0.09, Seattle scored 0.01, Chicago scored -0.004, and Auston scored 0.018.
+  Among the four cities, Boston is the one with the highest sentiment score. It shows that the people here feel more positive. However, Chicago has a negative average score. I guess the lives there wasn't so good recently.  
