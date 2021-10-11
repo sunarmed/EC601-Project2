@@ -10,7 +10,7 @@ For any newcomer, he or she should have a meaningful source of information of th
 
 ## MVP:
 
-With the help of Tweepy (https://www.tweepy.org/) , "an easy-to-use Pythn library for accessing the Twitter API", I can search the collect every tweets containing the keywords of a specified city, e.g. Boston. Every tweet can be analyzed by the Cloud Language Processing API and given a sentiment score of the tweet ranging from -1 to 1, meaning the positiveness of this short text.
+With the help of Tweepy (https://www.tweepy.org/) , "an easy-to-use Python library for accessing the Twitter API", I can search and collect every tweets containing the keywords of a specified city, e.g. Boston. Every tweet can be analyzed by the Google Cloud Language Processing API(https://cloud.google.com/natural-language) and given a sentiment score of the tweet ranging from -1 to 1, meaning the positiveness of this short text.
 
 At any given time, I can collect at least 300 tweet and calculate the mean and standard deviation of sentiment regarding this city. Those two indicators enable us to have a more holistic view over the sentimental part of this city.
 
