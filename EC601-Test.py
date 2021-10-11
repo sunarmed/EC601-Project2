@@ -7,9 +7,10 @@
 import tweepy #https://github.com/tweepy/tweepy
 import json
 from google.cloud import language_v1
-import os
-
-
+import os, sys
+import numpy as np
+import time
+import matplotlib.pyplot as plt
 # In[2]:
 
 
@@ -76,10 +77,10 @@ def sample_analyze_sentiment(text_content):
 #    print(u"Language of the text: {}".format(response.language))
 
 
-def search_tweets(keyword,filename):
+def search_tweets(keyword,filename,max_tweet):
     #search for tweet with 
     #Twitter only allows access to a users most recent 3240 tweets with this method
-    
+    print('do',keyword)
     #authorize twitter, initialize tweepy
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_key, access_secret)
@@ -87,36 +88,76 @@ def search_tweets(keyword,filename):
     
     #initialize a list to hold all the tweepy Tweets
     alltweets = []    
-    
+    tweet_sentiment_score=[]
+    tweet_sentiment_magnitude=[]
+
+
+
     #make initial request for most recent tweets (200 is the maximum allowed count)
     #new_tweets = api.user_timeline(screen_name = screen_name,count=10)
-    new_tweets = api.search_tweets(keyword,count = 1)
-    
-    print(sample_analyze_sentiment(new_tweets[0]._json['text']))
+    retry = 0
+    retry_limit = 10
+    while retry < retry_limit:
+        new_tweets = api.search_tweets(keyword,count = 15)
+        if(new_tweets):
+            break
+        retry = retry + 1
+        time.sleep(1)
+        print(f'retry {retry} on {keyword}')
+    if retry >= retry_limit:
+        exit(f'No Tweets Found by keyword {keyword}')
+
+
+    for t in new_tweets:
+        if t._json['lang'] !='en':
+            continue
+        score,magnitude=sample_analyze_sentiment(t._json['text'])
+        tweet_sentiment_score.append(score)
+        tweet_sentiment_magnitude.append(magnitude)
 
     #save most recent tweets
     alltweets.extend(new_tweets)
     
     #save the id of the oldest tweet less one
     oldest = alltweets[-1].id - 1
-    
+    print( "...%s tweets of %s downloaded so far %s" % (len(alltweets) , keyword , oldest) )
     #keep grabbing tweets until there are no tweets left to grab
     while len(new_tweets) > 0:
+        print('looping')
 #    while False:       
         #all subsiquent requests use the max_id param to prevent duplicates
         #new_tweets = api.user_timeline(screen_name = screen_name,count=10,max_id=oldest)
-        new_tweets = api.search_tweets(keyword,count = 1,max_id=oldest)
-        print(sample_analyze_sentiment(new_tweets[0]._json['text']))
+        retry = 0
+        retry_limit = 10
+        while retry < retry_limit:
+            new_tweets = api.search_tweets(keyword,count = 15,max_id=oldest)
+            if(new_tweets):
+                break
+            retry = retry + 1
+            time.sleep(1)
+            print(f'retry {retry} on {keyword}')
+        if retry >= retry_limit:
+            exit(f'No Tweets Found by keyword {keyword}')
 
+        for t in new_tweets:
+            if t._json['lang'] !='en':
+                continue
+            score,magnitude=sample_analyze_sentiment(t._json['text'])
+            tweet_sentiment_score.append(score)
+            tweet_sentiment_magnitude.append(magnitude)
         #save most recent tweets
         alltweets.extend(new_tweets)
         
         #update the id of the oldest tweet less one
         oldest = alltweets[-1].id - 1
-        if(len(alltweets) > 10):
+        if(len(alltweets) >= max_tweet):
             break
-#        print( "...%s tweets downloaded so far" % (len(alltweets)) )
+        print( "...%s tweets of %s downloaded so far %s" % (len(alltweets) , keyword , oldest) )
        
+
+    
+
+
     #write tweet objects to JSON
     file = open(filename, 'w') 
     print( "Writing tweet objects to JSON please wait...")
@@ -131,6 +172,8 @@ def search_tweets(keyword,filename):
     file.close()
 
 
+    return np.mean(tweet_sentiment_score),np.std(tweet_sentiment_score)
+
 
 def show_some_tweet(filename):
     fp = open(filename,'r')
@@ -140,15 +183,70 @@ def show_some_tweet(filename):
     return tweets_from_file
 
 
+def city_scores(city_name):
+    max_tweet_number = 300
+    filename = 'tweet-'+city_names+'.json'
+    mean, std = search_tweets( city_names , filename , max_tweet_number)
+    return mean,std
+
+
 # In[65]:
 
+
+
+
+city_list =['Boston','Seattle','Chicago','Austin']
+usage='python EC601-Test.py <city-name>\n\
+if <city-name> is --all, the program will output a list of built-in cities.'
+
 if __name__ == '__main__':
-    filename = 'tweet-boston.json'
-    tweet_text_keyword = 'boston'
-    col = os.get_terminal_size()[0]
-    search_tweets(tweet_text_keyword,filename)
-    tweet_list = show_some_tweet(filename)
-    print(len(tweet_list),'tweets are found')
+    print(len(sys.argv))
+    if len(sys.argv) < 2:
+        print(usage)
+        exit(0)
+    if sys.argv[1]=='--all':
+        print('all citys')
+        target_list = city_list
+    elif sys.argv[1]=='-h':
+        print(usage)
+        exit(0)
+    else:
+        target_list = [sys.argv[1]]            
+
+    if '--graph' in sys.argv:
+        graph_on = 1
+    else:
+        graph_on = 0
+
+    result = {}
+    for city_names in target_list:
+        mean, std = city_scores(city_names)
+        result[city_names] = {'mean':mean,'std':std}
+
+    print(result)
+    for city in result:
+        print(city,'scores:',result[city]['mean'])
+
+    if graph_on==1:
+        fig,ax = plt.subplots()
+        x_pos = np.arange(len(target_list))
+        scores = [result[c]['mean'] for c in target_list]
+        errors = [result[c]['std'] for c in target_list]
+        ax.bar(x_pos,scores, yerr=errors,align='center', alpha=0.5, ecolor='black')
+        ax.set_ylabel('sentiment score')
+        ax.set_xticks(x_pos)
+        ax.set_xticklabels(target_list)
+        ax.set_title('Sentiment Score of Big Cities')
+        ax.yaxis.grid(True)
+
+        plt.tight_layout()
+        plt.savefig('cities.png')
+        plt.show()
+
+
+#    tweet_list = show_some_tweet(filename)
+
+#    print(len(tweet_list),'tweets are found')
 #
 #    for count,t in enumerate(tweet_list):
 #        print('-'*col)
