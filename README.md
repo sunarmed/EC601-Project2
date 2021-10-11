@@ -12,11 +12,18 @@ For any newcomer, he or she should have a meaningful source of information of th
 
 With the help of Tweepy (https://www.tweepy.org/) , "an easy-to-use Pythn library for accessing the Twitter API", I can search the collect every tweets containing the keywords of a specified city, e.g. Boston. Every tweet can be analyzed by the Cloud Language Processing API and given a sentiment score of the tweet ranging from -1 to 1, meaning the positiveness of this short text.
 
-At any given time, I can collect at least 300 tweet and calculate the mean and variance of sentiment regarding this city. Those two indicators enable us to have a more holistic view over the sentimental part of this city.
+At any given time, I can collect at least 300 tweet and calculate the mean and standard deviation of sentiment regarding this city. Those two indicators enable us to have a more holistic view over the sentimental part of this city.
 
 ## Usage:
 
-run 
->> python EC601-Test.py
 
-It will shows the mean and variance of sentimental score of city Boston.
+run 
+> python EC601-Test.py <city name>
+It will shows the mean and standard deviation of sentimental score of the city.
+
+run 
+> python EC601-Test.py --all
+It will run the analysis of a built-in list of cities.
+
+>python EC601-Test.py --all --graph
+It will also shows a bar graph of sentiment scores.
