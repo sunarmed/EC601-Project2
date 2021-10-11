@@ -34,5 +34,5 @@ run the following commands:
 ## Result:
 ![cities score](https://github.com/sunarmed/EC601-Project2/blob/main/cities.png)
 
-In the figure cities.png, Boston scored 0.09, Seattle scored 0.01, Chicago scored -0.004, and Auston scored 0.018.
+In the figure *cities.png*, Boston scored 0.09, Seattle scored 0.01, Chicago scored -0.004, and Auston scored 0.018.
   Among the four cities, Boston is the one with the highest sentiment score. It shows that the people here feel more positive. However, Chicago has a negative average score. I guess the lives there wasn't so good recently.  
