@@ -11,23 +11,23 @@ import os, sys
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+
 # In[2]:
 
-
-with open('secret.json','r') as fp:
-    a=json.load(fp)
-#    print(a)
 #Twitter API credentials
-    consumer_key = a['consumer_key']
-    consumer_secret = a['consumer_secret']
-    access_key = a['access_token']
-    access_secret = a['access_token_secret']
+try:
+    with open('secret.json','r') as fp:
+        a=json.load(fp)
+    #    print(a)
+        consumer_key = a['consumer_key']
+        consumer_secret = a['consumer_secret']
+        access_key = a['access_token']
+        access_secret = a['access_token_secret']
+except:
+    print('Read Secret Credential Error')
 
 
 # In[64]:
-
-
-
 def sample_analyze_sentiment(text_content):
     """
     Analyzing Sentiment in a String
@@ -183,7 +183,7 @@ def show_some_tweet(filename):
     return tweets_from_file
 
 
-def city_scores(city_name):
+def city_scores(city_names):
     max_tweet_number = 300
     filename = 'tweet-'+city_names+'.json'
     mean, std = search_tweets( city_names , filename , max_tweet_number)
@@ -199,7 +199,7 @@ city_list =['Boston','Seattle','Chicago','Austin']
 usage='python EC601-Test.py <city-name>\n\
 if <city-name> is --all, the program will output a list of built-in cities.'
 
-if __name__ == '__main__':
+def main():
     print(len(sys.argv))
     if len(sys.argv) < 2:
         print(usage)
@@ -244,17 +244,8 @@ if __name__ == '__main__':
         plt.show()
 
 
-#    tweet_list = show_some_tweet(filename)
 
-#    print(len(tweet_list),'tweets are found')
-#
-#    for count,t in enumerate(tweet_list):
-#        print('-'*col)
-#        print(count)
-#        twt = t.get('text','')
-#        print(twt)
-#        print(sample_analyze_sentiment(twt))
-#        print('-'*col)
+if __name__ == '__main__':
+    main()
 
-
-
+print('import EC601')
