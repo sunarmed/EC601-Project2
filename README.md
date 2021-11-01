@@ -19,15 +19,15 @@ At any given time, I can collect at least 300 tweet and calculate the mean and s
 
 run the following commands:
 ```
-  python EC601-Test.py <city name>
+  python EC601_Project2.py <city name>
 ```
   It will shows the mean and standard deviation of sentimental score of the city.
 ``` 
-  python EC601-Test.py --all
+  python EC601_Project2.py --all
 ```
   It will run the analysis of a built-in list of cities.
 ```
-  python EC601-Test.py --all --graph
+  python EC601_Project2.py --all --graph
 ```
   It will also shows a bar graph of sentiment scores.
   
@@ -42,4 +42,4 @@ run
 ```
   pytest
 ```
-There are 5 unit tests for this projects.
+There are 5 unit tests for this projects in test_EC601_Project2.py. 
