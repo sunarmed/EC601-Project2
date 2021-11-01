@@ -183,7 +183,7 @@ def show_some_tweet(filename):
     return tweets_from_file
 
 
-def city_scores(city_name):
+def city_scores(city_names):
     max_tweet_number = 300
     filename = 'tweet-'+city_names+'.json'
     mean, std = search_tweets( city_names , filename , max_tweet_number)
